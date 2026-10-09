@@ -73,8 +73,8 @@ importers:
         version: 4.3.6
     devDependencies:
       '@elitosear/eslint-rules':
-        specifier: ^0.1.0
-        version: 0.1.0(eslint@10.5.0(jiti@2.7.0))(typescript@6.0.3)
+        specifier: ^0.2.0
+        version: 0.2.0(eslint@10.5.0(jiti@2.7.0))(typescript@6.0.3)
       '@eslint-community/eslint-plugin-eslint-comments':
         specifier: ^4.8.1
         version: 4.8.1(eslint@10.5.0(jiti@2.7.0))
@@ -165,8 +165,8 @@ packages:
     resolution: {integrity: sha512-dlT1m5e/0yUL0kRNcQn7yGLVThkgbB0Ga/1AmfDDC/8ik6AIiSf2QLQO2zPYvefsHP0aFgxO93cVLCCfDp7kzQ==}
     engines: {node: '>= 20.12.0'}
 
-  '@elitosear/eslint-rules@0.1.0':
-    resolution: {integrity: sha512-r35cIDuPl/y31QAQE9KxdeRgmS8YzQNULiqszcWLJyHB0PdhCP1nuIXDfDRJQR8XUkmva7AMTtzt1R4PWQNQbQ==}
+  '@elitosear/eslint-rules@0.2.0':
+    resolution: {integrity: sha512-04HA3/p6oPsn47QUwR/DvsU3J+RB86qszDH5SPmmsSFJWTnDq4yOEgyYqRbKBAhRHgyPrKjMma1+fxlNjoLbTQ==}
     engines: {node: '>=22'}
     peerDependencies:
       eslint: '>=9'
@@ -1633,7 +1633,7 @@ snapshots:
       fast-wrap-ansi: 0.2.2
       sisteransi: 1.0.5
 
-  '@elitosear/eslint-rules@0.1.0(eslint@10.5.0(jiti@2.7.0))(typescript@6.0.3)':
+  '@elitosear/eslint-rules@0.2.0(eslint@10.5.0(jiti@2.7.0))(typescript@6.0.3)':
     dependencies:
       '@typescript-eslint/utils': 8.71.1(eslint@10.5.0(jiti@2.7.0))(typescript@6.0.3)
       eslint: 10.5.0(jiti@2.7.0)

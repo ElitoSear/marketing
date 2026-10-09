@@ -3,5 +3,6 @@ allowBuilds:
   sharp: true
   protobufjs: true
   onnxruntime-node: false
+# Own package: trusted immediately, no release-age wait.
 minimumReleaseAgeExclude:
-  - '@elitosear/eslint-rules@0.1.0'
+  - '@elitosear/eslint-rules'
