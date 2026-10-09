@@ -1,0 +1,123 @@
+{
+  "name": "@elitosear/marketing",
+  "version": "0.1.0",
+  "description": "Marketing assets for any brand from one config: React carousel designs exported to PNG, AI image generation, local background removal, and skills that teach coding agents the workflow.",
+  "keywords": [
+    "marketing",
+    "carousel",
+    "instagram",
+    "social-media",
+    "image-generation",
+    "ai-sdk",
+    "claude-code",
+    "agent-skills",
+    "react",
+    "tailwindcss",
+    "playwright",
+    "cli"
+  ],
+  "license": "MIT",
+  "author": "ElitoSear",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ElitoSear/marketing.git"
+  },
+  "bugs": "https://github.com/ElitoSear/marketing/issues",
+  "homepage": "https://github.com/ElitoSear/marketing#readme",
+  "type": "module",
+  "sideEffects": false,
+  "bin": {
+    "marketing": "./dist/cli.js"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    "./core/marketing-config": {
+      "types": "./dist/core/marketing-config.d.ts",
+      "default": "./dist/core/marketing-config.js"
+    },
+    "./features/carousel/carousel-definition": {
+      "types": "./dist/features/carousel/carousel-definition.d.ts",
+      "default": "./dist/features/carousel/carousel-definition.js"
+    },
+    "./features/carousel/carousel-frame": {
+      "types": "./dist/features/carousel/carousel-frame.d.ts",
+      "default": "./dist/features/carousel/carousel-frame.js"
+    },
+    "./features/carousel/carousel-format-context": {
+      "types": "./dist/features/carousel/carousel-format-context.d.ts",
+      "default": "./dist/features/carousel/carousel-format-context.js"
+    },
+    "./features/carousel/preview-app": {
+      "types": "./dist/features/carousel/preview-app.d.ts",
+      "default": "./dist/features/carousel/preview-app.js"
+    },
+    "./components/emphasis-text": {
+      "types": "./dist/components/emphasis-text.d.ts",
+      "default": "./dist/components/emphasis-text.js"
+    },
+    "./components/icon-label": {
+      "types": "./dist/components/icon-label.d.ts",
+      "default": "./dist/components/icon-label.js"
+    }
+  },
+  "files": [
+    "dist",
+    "skill",
+    "templates"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src",
+    "type-check": "tsc --noEmit",
+    "prepack": "tsc",
+    "test": "node --test \"test/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@ai-sdk/google": "^4.0.92",
+    "@ai-sdk/google-vertex": "^5.0.107",
+    "@ai-sdk/openai": "^4.0.89",
+    "@ai-sdk/openai-compatible": "^3.0.66",
+    "@clack/prompts": "^1.8.1",
+    "@huggingface/transformers": "^4.3.0",
+    "@tailwindcss/vite": "^4.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "ai": "^7.0.133",
+    "c12": "^3.3.4",
+    "commander": "^15.0.0",
+    "env-paths": "^4.0.0",
+    "find-up-simple": "^1.0.1",
+    "mime-types": "^3.0.2",
+    "package-manager-detector": "^1.9.0",
+    "picocolors": "^1.1.1",
+    "playwright-core": "^1.63.0",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.0",
+    "vite": "^8.0.13",
+    "zod": "4.3.6"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@elitosear/eslint-rules": "^0.1.0",
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
+    "@types/mime-types": "^3.0.1",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "10.5.0",
+    "globals": "^17.13.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

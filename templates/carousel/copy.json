@@ -1,0 +1,7 @@
+{
+  "slides": [
+    { "title": "Cover title", "body": "One line that opens a loop." },
+    { "title": "The point", "body": "The best idea goes on the second slide." },
+    { "title": "The ask", "body": "One focused action for the viewer." }
+  ]
+}

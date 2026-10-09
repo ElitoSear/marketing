@@ -1,0 +1,7 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+  protobufjs: true
+  onnxruntime-node: false
+minimumReleaseAgeExclude:
+  - '@elitosear/eslint-rules@0.1.0'
