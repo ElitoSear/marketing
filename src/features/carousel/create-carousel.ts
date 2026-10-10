@@ -1,12 +1,8 @@
-import { access, cp, mkdir } from "node:fs/promises";
+import { cp, mkdir } from "node:fs/promises";
 import path from "node:path";
-import zod from "zod";
+import { fileExists, slugSchema } from "../../core/design-directory.ts";
 import type { ResolvedMarketingConfig } from "../../core/load-marketing-config.ts";
 import { PACKAGE_ROOT } from "../../core/package-paths.ts";
-
-const slugSchema = zod
-  .string()
-  .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Use lowercase words joined by hyphens");
 
 /**
  * Copies the starter design into `<designs>/<slug>/` with one copy file per
@@ -18,11 +14,8 @@ export async function createCarousel(options: {
 }): Promise<string[]> {
   const slug = slugSchema.parse(options.slug);
   const carouselDirectory = path.join(options.config.carousel.designsDirectory, slug);
-  const exists = await access(carouselDirectory).then(
-    () => true,
-    () => false,
-  );
-  if (exists) throw new Error(`Carousel "${slug}" already exists`);
+  if (await fileExists(carouselDirectory))
+    throw new Error(`Carousel "${slug}" already exists`);
 
   const templateDirectory = path.join(PACKAGE_ROOT, "templates", "carousel");
   await mkdir(carouselDirectory, { recursive: true });

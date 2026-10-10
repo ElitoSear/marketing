@@ -1,8 +1,6 @@
-import { createRequire } from "node:module";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { ResolvedMarketingConfig } from "./load-marketing-config.ts";
-import { PACKAGE_ROOT } from "./package-paths.ts";
 
 const WORKSPACE_DIRECTORY_NAME = ".marketing";
 
@@ -26,9 +24,9 @@ function relativeSpecifier(options: {
 
 /**
  * Writes the throwaway files the preview server needs next to the config: an
- * HTML page, the entry that globs the project's designs, and the stylesheet
- * that wires Tailwind to the project's styles. The directory ignores itself in git and is
- * rewritten on every run, so nothing in it is edited by hand.
+ * HTML page and the entry that globs the project's designs. Styling comes
+ * from the stylesheets the designs import themselves. The directory ignores
+ * itself in git and is rewritten on every run, so nothing in it is edited by hand.
  */
 export async function writePreviewWorkspace(
   config: ResolvedMarketingConfig,
@@ -38,12 +36,8 @@ export async function writePreviewWorkspace(
 
   const specifier = (target: string) =>
     relativeSpecifier({ workspaceDirectory, target });
-  const designsSpecifier = specifier(config.carousel.designsDirectory);
-  // Tailwind lives next to this package, not necessarily in the project's own
-  // node_modules, so the stylesheet imports it by file path.
-  const tailwindStylesheet = createRequire(import.meta.url).resolve(
-    "tailwindcss/index.css",
-  );
+  const carouselsSpecifier = specifier(config.carousel.designsDirectory);
+  const imageAdsSpecifier = specifier(config.ads.image.designsDirectory);
 
   await writeFile(path.join(workspaceDirectory, ".gitignore"), "*\n");
   await writeFile(
@@ -53,7 +47,16 @@ export async function writePreviewWorkspace(
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carousel preview</title>
+    <title>Marketing preview</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        scrollbar-gutter: auto;
+        background: transparent;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
@@ -63,32 +66,28 @@ export async function writePreviewWorkspace(
 `,
   );
   await writeFile(
-    path.join(workspaceDirectory, "styles.css"),
-    `@import "${specifier(tailwindStylesheet)}";
-@import "${specifier(config.stylesPath)}";
-@source "${specifier(path.join(PACKAGE_ROOT, "dist"))}";
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-}
-`,
-  );
-  await writeFile(
     path.join(workspaceDirectory, "entry.tsx"),
-    `import "./styles.css";
-import { renderPreview } from "@elitosear/marketing/features/carousel/preview-app";
+    `import { renderPreview } from "@elitosear/marketing/core/preview-app";
 
 renderPreview({
-  format: ${JSON.stringify(config.carousel.format)},
+  brand: ${JSON.stringify(config.brand)},
   languages: ${JSON.stringify(config.languages)},
-  designModules: import.meta.glob("${designsSpecifier}/*/design.tsx", { eager: true }),
-  copyModules: import.meta.glob("${designsSpecifier}/*/copy.*.json", {
-    eager: true,
-    import: "default",
-  }),
+  carousels: {
+    format: ${JSON.stringify(config.carousel.format)},
+    designModules: import.meta.glob("${carouselsSpecifier}/*/design.tsx", { eager: true }),
+    copyModules: import.meta.glob("${carouselsSpecifier}/*/copy.*.json", {
+      eager: true,
+      import: "default",
+    }),
+  },
+  imageAds: {
+    format: ${JSON.stringify(config.ads.image.format)},
+    designModules: import.meta.glob("${imageAdsSpecifier}/*/design.tsx", { eager: true }),
+    copyModules: import.meta.glob("${imageAdsSpecifier}/*/copy.*.json", {
+      eager: true,
+      import: "default",
+    }),
+  },
 });
 `,
   );

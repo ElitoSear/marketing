@@ -7,14 +7,14 @@ import type { ComponentProps, ReactNode } from "react";
  */
 export function IconLabel({
   icon,
-  className,
+  style,
   children,
   ...spanProps
 }: ComponentProps<"span"> & { icon: ReactNode }) {
   return (
     <span
       {...spanProps}
-      className={`inline-flex items-center ${className ?? ""}`}
+      style={{ display: "inline-flex", alignItems: "center", ...style }}
     >
       {icon}
       {children}

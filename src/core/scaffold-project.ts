@@ -30,10 +30,12 @@ export const IMAGE_PROVIDER_KINDS = Object.keys(
   IMAGE_PROVIDER_PRESETS,
 ) as ImageProviderKind[];
 
-const STYLES_STUB = `/*
- * Fonts, design tokens and @theme entries the designs render with.
- * Tailwind is already loaded; add @font-face rules, :root variables and
- * @theme definitions here, or @import the project's own stylesheet.
+const STYLES_STUB = `@import "tailwindcss";
+@source "./";
+
+/*
+ * The brand's look: @font-face rules, :root variables and @theme entries
+ * (fonts, colours). Every design imports this file, so they share one theme.
  */
 `;
 
@@ -41,7 +43,8 @@ export interface ScaffoldProjectOptions {
   /** Directory that receives marketing.config.ts and the folders around it. */
   directory: string;
   brandName: string;
-  brandHandle: string;
+  /** Written as the `handle` brand variable; undefined writes none. */
+  brandHandle: string | undefined;
   languages: string[];
   imageProviderKind: ImageProviderKind | undefined;
 }
@@ -51,7 +54,7 @@ export interface ScaffoldedProject {
   createdPaths: string[];
 }
 
-/** Writes the config, an empty stylesheet, empty ledger, designs folder and env schema. */
+/** Writes the config, an empty stylesheet, empty carousel and ad ledgers, and env schema. */
 export async function scaffoldProject(
   options: ScaffoldProjectOptions,
 ): Promise<ScaffoldedProject> {
@@ -60,13 +63,16 @@ export async function scaffoldProject(
       ? undefined
       : IMAGE_PROVIDER_PRESETS[options.imageProviderKind];
   const rawConfig: MarketingConfigInput = {
-    brand: { name: options.brandName, handle: options.brandHandle },
-    styles: "./styles.css",
+    brand:
+      options.brandHandle === undefined
+        ? { name: options.brandName }
+        : { name: options.brandName, handle: options.brandHandle },
     languages: options.languages,
     imageProvider: preset?.imageProvider,
   };
 
-  await mkdir(path.join(options.directory, "designs"), { recursive: true });
+  await mkdir(path.join(options.directory, "carousels"), { recursive: true });
+  await mkdir(path.join(options.directory, "ads"), { recursive: true });
   // JSON is valid TypeScript; unquoting plain keys makes the file read like hand-written config.
   const configLiteral = JSON.stringify(rawConfig, null, 2).replaceAll(
     /^(\s*)"([A-Za-z_]\w*)":/gm,
@@ -78,7 +84,10 @@ export async function scaffoldProject(
       content: `import { defineMarketingConfig } from "@elitosear/marketing/core/marketing-config";\n\nexport default defineMarketingConfig(${configLiteral});\n`,
     },
     { fileName: "styles.css", content: STYLES_STUB },
-    { fileName: "ledger.json", content: "[]\n" },
+    // Lets TypeScript accept the stylesheet imports every design starts with.
+    { fileName: "env.d.ts", content: 'declare module "*.css";\n' },
+    { fileName: path.join("carousels", "ledger.json"), content: "[]\n" },
+    { fileName: path.join("ads", "ledger.json"), content: "[]\n" },
     { fileName: ".gitignore", content: "output\n.marketing\n.env\n" },
     {
       fileName: ".env.schema",
@@ -87,7 +96,6 @@ export async function scaffoldProject(
           ? "# Add the environment variable named by imageProvider in marketing.config.ts.\n"
           : `# Read by the imageProvider in marketing.config.ts.\n${preset.environmentVariable}=\n`,
     },
-    { fileName: path.join("designs", ".gitkeep"), content: "" },
   ];
   for (const file of files)
     await writeFile(path.join(options.directory, file.fileName), file.content);

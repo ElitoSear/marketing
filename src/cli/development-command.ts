@@ -11,11 +11,11 @@ const optionsSchema = zod.object({ port: zod.coerce.number().int().optional() })
 export function registerDevelopmentCommand(program: Command) {
   program
     .command("dev")
-    .description("Start the live carousel preview")
+    .description("Start the live preview of carousels and image ads")
     .option("--port <port>", "port to listen on")
     .action((rawOptions: unknown) =>
       runCommand({
-        title: "Carousel preview",
+        title: "Preview",
         task: async () => {
           const options = optionsSchema.parse(rawOptions);
           const config = await loadMarketingConfig({ startDirectory: process.cwd() });

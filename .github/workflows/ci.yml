@@ -28,5 +28,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm test
       - run: pnpm build
+      - name: Type-check the starter templates
+        run: pnpm exec tsc -p templates
       - name: Verify the package packs
         run: npm pack --dry-run

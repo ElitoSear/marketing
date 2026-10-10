@@ -38,6 +38,7 @@ export async function createPreviewServer(options: {
       entries: [
         path.join(workspaceDirectory, "entry.tsx"),
         path.join(config.carousel.designsDirectory, "**", "*.tsx"),
+        path.join(config.ads.image.designsDirectory, "**", "*.tsx"),
       ],
       include: [
         "react",

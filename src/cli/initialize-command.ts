@@ -60,7 +60,7 @@ export function registerInitializeCommand(program: Command) {
     .argument("[directory]", "where to create the marketing folder", "marketing")
     .description("Set up marketing in this project")
     .option("--name <name>", "brand name")
-    .option("--handle <handle>", "social handle, for example @brand")
+    .option("--handle <handle>", "social handle, for example @brand; more brand variables go in marketing.config.ts")
     .option("--languages <codes>", "comma-separated language codes")
     .option("--provider <kind>", "image provider: google, openai or none")
     .option("-y, --yes", "accept defaults and skip prompts")
@@ -80,15 +80,18 @@ export function registerInitializeCommand(program: Command) {
               ? await askText({ message: "Brand name", validate: requireValue })
               : undefined);
           if (brandName === undefined) throw new Error("Pass --name <name>");
-          const defaultHandle = `@${brandName.toLowerCase().replaceAll(/[^a-z0-9]+/g, "")}`;
-          const brandHandle =
+          const answeredHandle =
             options.handle ??
             (interactive
               ? await askText({
-                  message: "Social handle",
-                  initialValue: defaultHandle,
+                  message: "Social handle (optional, Enter to skip)",
+                  initialValue: "",
                 })
-              : defaultHandle);
+              : undefined);
+          const brandHandle =
+            answeredHandle === undefined || answeredHandle === ""
+              ? undefined
+              : answeredHandle;
           const languageCodes =
             options.languages ??
             (interactive
@@ -131,13 +134,13 @@ export function registerInitializeCommand(program: Command) {
           });
           const addCommandText = await resolveAddCommand({
             directory: process.cwd(),
-            packages: ["@elitosear/marketing", "react", "react-dom", "zod"],
+            packages: ["@elitosear/marketing", "react", "react-dom", "zod", "tailwindcss"],
           });
           note(
             [
               `1. ${pc.cyan(addCommandText)}`,
               `2. ${pc.cyan(`cd ${path.relative(process.cwd(), targetDirectory) || "."}`)}`,
-              `3. Fill in styles.css with the project's fonts and tokens.`,
+              `3. Put the brand's fonts and colours in styles.css; every design imports it.`,
               `4. ${pc.cyan(`${runCommandText} skill install`)} gives your coding agent the skills.`,
               `5. ${pc.cyan(`${runCommandText} carousel new my-first-carousel`)}, then ${pc.cyan(`${runCommandText} dev`)}.`,
             ].join("\n"),

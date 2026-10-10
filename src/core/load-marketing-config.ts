@@ -2,8 +2,9 @@ import path from "node:path";
 import { loadConfig } from "c12";
 import { findUp } from "find-up-simple";
 import type { ImageProviderConfig } from "./image-provider.ts";
-import type { CarouselFormat } from "../features/carousel/carousel-config.ts";
-import { marketingConfigSchema } from "./marketing-config.ts";
+import type { VideoProviderConfig } from "./video-provider.ts";
+import type { MediaFormat } from "./media-format.ts";
+import { marketingConfigSchema, type BrandConfig } from "./marketing-config.ts";
 
 const CONFIG_FILE_NAMES = [
   "marketing.config.ts",
@@ -16,22 +17,26 @@ const CONFIG_FILE_NAMES = [
 export interface ResolvedMarketingConfig {
   configFilePath: string;
   configDirectory: string;
-  brand: { name: string; handle: string };
-  stylesPath: string;
+  brand: BrandConfig;
   languages: string[];
   aliases: Record<string, string>;
   imageProvider: ImageProviderConfig | undefined;
+  videoProvider: VideoProviderConfig | undefined;
   carousel: {
     designsDirectory: string;
     outputDirectory: string;
     ledgerPath: string;
-    format: CarouselFormat;
-    inspirationDirectory: string | undefined;
+    format: MediaFormat;
   };
-  agent: {
-    skillsDirectory: string;
-    contextFiles: string[];
-    instructionsFile: string | undefined;
+  ads: {
+    image: { designsDirectory: string; format: MediaFormat };
+    video: {
+      designsDirectory: string;
+      format: MediaFormat;
+      framesPerSecond: number;
+    };
+    outputDirectory: string;
+    ledgerPath: string;
   };
   /** Environment after the .env file next to the config was loaded. */
   environment: NodeJS.ProcessEnv;
@@ -47,14 +52,11 @@ export function resolveMarketingConfig(options: {
   const configDirectory = path.dirname(options.configFilePath);
   const resolveFromConfig = (relativePath: string) =>
     path.resolve(configDirectory, relativePath);
-  const resolveOptional = (relativePath: string | undefined) =>
-    relativePath === undefined ? undefined : resolveFromConfig(relativePath);
 
   return {
     configFilePath: options.configFilePath,
     configDirectory,
     brand: config.brand,
-    stylesPath: resolveFromConfig(config.styles),
     languages: config.languages,
     aliases: Object.fromEntries(
       Object.entries(config.aliases).map(([alias, directory]) => [
@@ -63,17 +65,25 @@ export function resolveMarketingConfig(options: {
       ]),
     ),
     imageProvider: config.imageProvider,
+    videoProvider: config.videoProvider,
     carousel: {
       designsDirectory: resolveFromConfig(config.carousel.designs),
       outputDirectory: resolveFromConfig(config.carousel.output),
       ledgerPath: resolveFromConfig(config.carousel.ledger),
       format: config.carousel.format,
-      inspirationDirectory: resolveOptional(config.carousel.inspirationDirectory),
     },
-    agent: {
-      skillsDirectory: resolveFromConfig(config.agent.skillsDirectory),
-      contextFiles: config.agent.contextFiles.map(resolveFromConfig),
-      instructionsFile: resolveOptional(config.agent.instructionsFile),
+    ads: {
+      image: {
+        designsDirectory: resolveFromConfig(config.ads.image.designs),
+        format: config.ads.image.format,
+      },
+      video: {
+        designsDirectory: resolveFromConfig(config.ads.video.designs),
+        format: config.ads.video.format,
+        framesPerSecond: config.ads.video.framesPerSecond,
+      },
+      outputDirectory: resolveFromConfig(config.ads.output),
+      ledgerPath: resolveFromConfig(config.ads.ledger),
     },
     environment: options.environment,
   };

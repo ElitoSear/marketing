@@ -1,7 +1,7 @@
 {
   "name": "@elitosear/marketing",
   "version": "0.1.1",
-  "description": "Marketing assets for any brand from one config: React carousel designs exported to PNG, AI image generation, local background removal, and skills that teach coding agents the workflow.",
+  "description": "Marketing assets for any brand from one config: React carousels and ads (image and video) exported to PNG and MP4, AI image generation, local background removal, and skills that teach coding agents the workflow.",
   "keywords": [
     "marketing",
     "carousel",
@@ -14,7 +14,10 @@
     "react",
     "tailwindcss",
     "playwright",
-    "cli"
+    "cli",
+    "ads",
+    "video",
+    "remotion"
   ],
   "license": "MIT",
   "author": "ElitoSear",
@@ -35,6 +38,18 @@
       "types": "./dist/core/marketing-config.d.ts",
       "default": "./dist/core/marketing-config.js"
     },
+    "./core/brand-context": {
+      "types": "./dist/core/brand-context.d.ts",
+      "default": "./dist/core/brand-context.js"
+    },
+    "./core/media-format-context": {
+      "types": "./dist/core/media-format-context.d.ts",
+      "default": "./dist/core/media-format-context.js"
+    },
+    "./core/preview-app": {
+      "types": "./dist/core/preview-app.d.ts",
+      "default": "./dist/core/preview-app.js"
+    },
     "./features/carousel/carousel-definition": {
       "types": "./dist/features/carousel/carousel-definition.d.ts",
       "default": "./dist/features/carousel/carousel-definition.js"
@@ -43,13 +58,29 @@
       "types": "./dist/features/carousel/carousel-frame.d.ts",
       "default": "./dist/features/carousel/carousel-frame.js"
     },
-    "./features/carousel/carousel-format-context": {
-      "types": "./dist/features/carousel/carousel-format-context.d.ts",
-      "default": "./dist/features/carousel/carousel-format-context.js"
+    "./features/carousel/carousel-context": {
+      "types": "./dist/features/carousel/carousel-context.d.ts",
+      "default": "./dist/features/carousel/carousel-context.js"
     },
-    "./features/carousel/preview-app": {
-      "types": "./dist/features/carousel/preview-app.d.ts",
-      "default": "./dist/features/carousel/preview-app.js"
+    "./features/ads/image/image-ad-definition": {
+      "types": "./dist/features/ads/image/image-ad-definition.d.ts",
+      "default": "./dist/features/ads/image/image-ad-definition.js"
+    },
+    "./features/ads/image/ad-canvas": {
+      "types": "./dist/features/ads/image/ad-canvas.d.ts",
+      "default": "./dist/features/ads/image/ad-canvas.js"
+    },
+    "./features/ads/video/video-ad-definition": {
+      "types": "./dist/features/ads/video/video-ad-definition.d.ts",
+      "default": "./dist/features/ads/video/video-ad-definition.js"
+    },
+    "./features/ads/video/video-composition": {
+      "types": "./dist/features/ads/video/video-composition.d.ts",
+      "default": "./dist/features/ads/video/video-composition.js"
+    },
+    "./features/ads/video/motion": {
+      "types": "./dist/features/ads/video/motion.d.ts",
+      "default": "./dist/features/ads/video/motion.js"
     },
     "./components/emphasis-text": {
       "types": "./dist/components/emphasis-text.d.ts",
@@ -95,17 +126,26 @@
     "picocolors": "^1.1.1",
     "playwright-core": "^1.63.0",
     "sharp": "^0.35.5",
-    "tailwindcss": "^4.3.0",
     "vite": "^8.0.13",
     "zod": "4.3.6"
   },
   "peerDependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.534",
+    "@remotion/bundler": "4.0.534",
+    "@remotion/renderer": "4.0.534",
+    "@remotion/cli": "4.0.534",
+    "@remotion/tailwind-v4": "4.0.534",
+    "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
     "@elitosear/eslint-rules": "^0.2.0",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
+    "@remotion/bundler": "4.0.534",
+    "@remotion/cli": "4.0.534",
+    "@remotion/renderer": "4.0.534",
+    "@remotion/tailwind-v4": "4.0.534",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^26.2.0",
     "@types/react": "^19.2.14",
@@ -114,10 +154,29 @@
     "globals": "^17.13.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "remotion": "4.0.534",
+    "tailwindcss": "^4.3.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.71.1"
   },
   "engines": {
     "node": ">=22"
+  },
+  "peerDependenciesMeta": {
+    "remotion": {
+      "optional": true
+    },
+    "@remotion/bundler": {
+      "optional": true
+    },
+    "@remotion/renderer": {
+      "optional": true
+    },
+    "@remotion/cli": {
+      "optional": true
+    },
+    "@remotion/tailwind-v4": {
+      "optional": true
+    }
   }
 }

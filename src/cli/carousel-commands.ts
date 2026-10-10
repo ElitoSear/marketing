@@ -1,13 +1,12 @@
 import { log, spinner } from "@clack/prompts";
 import type { Command } from "commander";
-import { readdir } from "node:fs/promises";
 import path from "node:path";
 import pc from "picocolors";
 import zod from "zod";
+import { listDesignLanguages } from "../core/design-directory.ts";
 import {
+  carouselLedger,
   carouselLedgerEntrySchema,
-  readCarouselLedger,
-  writeCarouselLedgerEntry,
 } from "../features/carousel/carousel-ledger.ts";
 import { createCarousel } from "../features/carousel/create-carousel.ts";
 import {
@@ -73,15 +72,12 @@ export function registerCarouselCommands(program: Command) {
           const config = await loadMarketingConfig({
             startDirectory: process.cwd(),
           });
-          const ledger = await readCarouselLedger(config.carousel.ledgerPath);
+          const ledger = await carouselLedger.read(config.carousel.ledgerPath);
           const slugs = await listCarouselSlugs(config);
           for (const slug of slugs) {
-            const files = await readdir(
+            const languages = await listDesignLanguages(
               path.join(config.carousel.designsDirectory, slug),
             );
-            const languages = files
-              .map((file) => /^copy\.(.+)\.json$/.exec(file)?.[1])
-              .filter((language) => language !== undefined);
             const concept = ledger.find((entry) => entry.slug === slug)?.concept;
             log.message(
               `${pc.bold(slug)} ${pc.dim(`[${languages.join(", ")}]`)}${concept === undefined ? "" : `\n${pc.dim(concept)}`}`,
@@ -148,7 +144,7 @@ export function registerCarouselCommands(program: Command) {
           const config = await loadMarketingConfig({
             startDirectory: process.cwd(),
           });
-          await writeCarouselLedgerEntry({
+          await carouselLedger.write({
             ledgerPath: config.carousel.ledgerPath,
             entry: {
               slug: options.slug,

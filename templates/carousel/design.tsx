@@ -3,6 +3,7 @@ import {
   CarouselCanvas,
   CarouselSlide,
 } from "@elitosear/marketing/features/carousel/carousel-frame";
+import "../../styles.css";
 import { copySchema, type Copy } from "./design/copy-schema.ts";
 
 function Design(props: { copy: Copy }) {

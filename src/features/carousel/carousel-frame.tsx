@@ -1,6 +1,11 @@
-import type { ComponentProps } from "react";
+import { useMemo, type ComponentProps } from "react";
+import { useMediaFormat } from "../../core/media-format-context.ts";
 import { CAROUSEL_CANVAS_ID } from "./carousel-config.ts";
-import { useCarouselFormat } from "./carousel-format-context.ts";
+import {
+  CarouselCanvasContext,
+  CarouselSlideContext,
+  useCarouselCanvas,
+} from "./carousel-context.ts";
 
 /**
  * The whole carousel as one wide canvas: `slideCount` slides side by side.
@@ -14,21 +19,35 @@ export function CarouselCanvas({
   children,
   ...divProps
 }: ComponentProps<"div"> & { slideCount: number }) {
-  const format = useCarouselFormat();
+  const format = useMediaFormat();
+  const canvas = useMemo(
+    () => ({
+      slideCount,
+      slideWidth: format.width,
+      slideHeight: format.height,
+      width: slideCount * format.width,
+      safeInsets: format.safeInsets,
+    }),
+    [slideCount, format],
+  );
   return (
-    <div
-      {...divProps}
-      id={CAROUSEL_CANVAS_ID}
-      data-slide-count={slideCount}
-      className={`relative overflow-hidden ${className ?? ""}`}
-      style={{
-        width: slideCount * format.width,
-        height: format.height,
-        ...style,
-      }}
-    >
-      {children}
-    </div>
+    <CarouselCanvasContext.Provider value={canvas}>
+      <div
+        {...divProps}
+        id={CAROUSEL_CANVAS_ID}
+        data-slide-count={slideCount}
+        className={className}
+        style={{
+          position: "relative",
+          overflow: "hidden",
+          width: canvas.width,
+          height: canvas.slideHeight,
+          ...style,
+        }}
+      >
+        {children}
+      </div>
+    </CarouselCanvasContext.Provider>
   );
 }
 
@@ -40,19 +59,27 @@ export function CarouselSlide({
   children,
   ...divProps
 }: ComponentProps<"div"> & { slideIndex: number }) {
-  const format = useCarouselFormat();
+  const canvas = useCarouselCanvas();
+  const slide = useMemo(
+    () => ({ slideIndex, left: slideIndex * canvas.slideWidth }),
+    [slideIndex, canvas.slideWidth],
+  );
   return (
-    <div
-      {...divProps}
-      className={`absolute top-0 ${className ?? ""}`}
-      style={{
-        left: slideIndex * format.width,
-        width: format.width,
-        height: format.height,
-        ...style,
-      }}
-    >
-      {children}
-    </div>
+    <CarouselSlideContext.Provider value={slide}>
+      <div
+        {...divProps}
+        className={className}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: slide.left,
+          width: canvas.slideWidth,
+          height: canvas.slideHeight,
+          ...style,
+        }}
+      >
+        {children}
+      </div>
+    </CarouselSlideContext.Provider>
   );
 }

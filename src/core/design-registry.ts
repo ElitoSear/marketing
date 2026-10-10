@@ -1,10 +1,10 @@
-import type { ReactElement } from "react";
-import type { CarouselDefinition } from "./carousel-definition.ts";
-
-export interface CarouselRegistry {
+export interface DesignRegistry<Definition> {
   listSlugs: () => string[];
   listLanguages: (slug: string) => string[];
-  render: (slug: string, language: string) => ReactElement;
+  resolve: (options: { slug: string; language: string }) => {
+    definition: Definition;
+    copy: unknown;
+  };
 }
 
 function requireMatch(options: {
@@ -13,19 +13,20 @@ function requireMatch(options: {
 }): RegExpExecArray {
   const match = options.pattern.exec(options.modulePath);
   if (match === null)
-    throw new Error(`Unexpected carousel module path: ${options.modulePath}`);
+    throw new Error(`Unexpected design module path: ${options.modulePath}`);
   return match;
 }
 
 /**
- * Indexes the glob results the generated preview entry collects from the
+ * Indexes the glob results the generated preview entry collects from a
  * designs directory: `<slug>/design.tsx` and `<slug>/copy.<language>.json`.
  */
-export function createCarouselRegistry(options: {
-  designModules: Record<string, { default: CarouselDefinition }>;
+export function createDesignRegistry<Definition>(options: {
+  kind: string;
+  designModules: Record<string, { default: Definition }>;
   copyModules: Record<string, unknown>;
-}): CarouselRegistry {
-  const designsBySlug = new Map<string, CarouselDefinition>();
+}): DesignRegistry<Definition> {
+  const designsBySlug = new Map<string, Definition>();
   for (const [modulePath, designModule] of Object.entries(
     options.designModules,
   )) {
@@ -54,18 +55,18 @@ export function createCarouselRegistry(options: {
   return {
     listSlugs: () => [...designsBySlug.keys()],
     listLanguages,
-    render: (slug, language) => {
-      const design = designsBySlug.get(slug);
-      if (design === undefined)
+    resolve: ({ slug, language }) => {
+      const definition = designsBySlug.get(slug);
+      if (definition === undefined)
         throw new Error(
-          `Unknown carousel "${slug}". Available: ${[...designsBySlug.keys()].join(", ")}`,
+          `Unknown ${options.kind} "${slug}". Available: ${[...designsBySlug.keys()].join(", ")}`,
         );
       const copy = copyBySlugAndLanguage.get(slug)?.get(language);
       if (copy === undefined)
         throw new Error(
-          `Carousel "${slug}" has no ${language} copy. Available: ${listLanguages(slug).join(", ")}`,
+          `${options.kind} "${slug}" has no ${language} copy. Available: ${listLanguages(slug).join(", ")}`,
         );
-      return design.renderWithCopy(copy);
+      return { definition, copy };
     },
   };
 }

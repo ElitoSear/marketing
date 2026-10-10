@@ -1,10 +1,7 @@
-import { readFile, writeFile } from "node:fs/promises";
 import zod from "zod";
+import { createLedger } from "../../core/ledger.ts";
 
-/**
- * One entry per finished carousel. The next carousel's author reads this and
- * must pick a visibly different concept, so posts never look like one template.
- */
+/** One entry per finished carousel. */
 export const carouselLedgerEntrySchema = zod.strictObject({
   slug: zod.string().min(1),
   created_at: zod.iso.date(),
@@ -16,24 +13,4 @@ export const carouselLedgerEntrySchema = zod.strictObject({
 });
 export type CarouselLedgerEntry = zod.infer<typeof carouselLedgerEntrySchema>;
 
-export const carouselLedgerSchema = zod.array(carouselLedgerEntrySchema);
-export type CarouselLedger = zod.infer<typeof carouselLedgerSchema>;
-
-export async function readCarouselLedger(
-  ledgerPath: string,
-): Promise<CarouselLedger> {
-  return carouselLedgerSchema.parse(JSON.parse(await readFile(ledgerPath, "utf8")));
-}
-
-/** Adds the entry, or replaces the existing one with the same slug. */
-export async function writeCarouselLedgerEntry(options: {
-  ledgerPath: string;
-  entry: CarouselLedgerEntry;
-}): Promise<void> {
-  const ledger = await readCarouselLedger(options.ledgerPath);
-  const otherEntries = ledger.filter((entry) => entry.slug !== options.entry.slug);
-  await writeFile(
-    options.ledgerPath,
-    `${JSON.stringify([...otherEntries, options.entry], null, 2)}\n`,
-  );
-}
+export const carouselLedger = createLedger(carouselLedgerEntrySchema);
