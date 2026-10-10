@@ -1,6 +1,6 @@
 {
   "name": "@elitosear/marketing",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Marketing assets for any brand from one config: React carousels and ads (image and video) exported to PNG and MP4, AI image generation, local background removal, and skills that teach coding agents the workflow.",
   "keywords": [
     "marketing",
